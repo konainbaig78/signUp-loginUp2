@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Signup & Login</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:,">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   <div class="auth-container">
@@ -13,22 +15,26 @@
       <form id="signup-form" class="auth-form active">
         <h2>Create Account</h2>
         <input type="text" placeholder="Full Name" required>
-        <input type="email" placeholder="Email" required>
-        <input type="password" placeholder="Password" required>
-        <button type="submit">Sign Up</button>
+        <input type="email" placeholder="Email" required id="signup-email">
+        <input type="password" placeholder="Password" required id="signup-password">
+        
+        <button type="submit" id="signup">Sign Up</button>
         <p>Already have an account? <a href="#" id="switch-to-login">Login</a></p>
       </form>
 
       <!-- Login Form -->
       <form id="login-form" class="auth-form">
         <h2>Welcome Back</h2>
-        <input type="email" placeholder="Email" required>
-        <input type="password" placeholder="Password" required>
-        <button type="submit">Login</button>
+        <input type="email" placeholder="Email" required id="lo-email">
+        <input type="password" placeholder="Password" required id="lo-pass">
+        <button type="submit" id="login">Login</button>
         <p>Don't have an account? <a href="#" id="switch-to-signup">Sign Up</a></p>
       </form>
     </div>
   </div>
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
+  <script type="module" src="firebase.js" defer></script>
+  <script type="module" src="login.js" defer></script>
+
 </body>
 </html>
