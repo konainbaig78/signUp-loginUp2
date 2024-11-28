@@ -1,49 +1,33 @@
-import  {getAuth,  createUserWithEmailAndPassword } from "./firebase.js";
+import { getAuth, createUserWithEmailAndPassword } from "./firebase.js";
 const auth = getAuth();
 
-const emailInput = document.querySelector("#signup-email");
-const passwordInput = document.querySelector("#signup-password");
-const signUpBtn = document.querySelector("#signup");
-
+const emailInput = document.getElementById("signup-email");
+const passwordInput = document.getElementById("signup-password");
+const signUpBtn = document.getElementById("signup");
 
 signUpBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
-  
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
 
-
   if (!email || !password) {
-    Swal.fire({
-      title: "Error",
-      text: "Please fill in both email and password fields.",
-      icon: "warning",
-    });
+   Swal.fire("Please fill in both fields!");
     return;
   }
 
-
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-    
       const user = userCredential.user;
-      Swal.fire({
-        title: "Success!",
-        text: "Account created successfully.",
-        icon: "success",
-      });
-
+      Swal.fire("Account created successfully!");
       emailInput.value = "";
       passwordInput.value = "";
     })
     .catch((error) => {
-  
       const errorMessage = error.message;
       Swal.fire({
-        title: "Error",
-        text: errorMessage,
-        icon: "error",
+         icon: "error",
+         text: `Error: ${errorMessage}`
       });
     });
 });
