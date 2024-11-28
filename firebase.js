@@ -1,13 +1,8 @@
-
-// Import the functions you need from the SDKs you need
+// Import Firebase functions
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-// import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyANipEpvjQsi3ucUDknB5UkYrn8RrYt_Go",
   authDomain: "form-b3f07.firebaseapp.com",
@@ -20,26 +15,53 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app); // Initialize Firebase Auth
 
+// DOM Elements
+const emailInput = document.querySelector("#signup-email");
+const passwordInput = document.querySelector("#signup-password");
+const signUpBtn = document.querySelector("#signup");
 
-const email=document.querySelector("#signup-email")
-const password=document.querySelector("#signup-password")
-const signUpBtn=document.querySelector("#signup")
+// Event Listener for Signup
+signUpBtn.addEventListener("click", (e) => {
+  e.preventDefault();
 
-signUpBtn.addEventListener("click", (e)=>{
-    e.preventDefault()
-    const auth = getAuth();
-createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed up 
-    const user = userCredential.user;
-Swal.fire("Account Created Successfully!")    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    Swal.fire(errorMessage)
-    // ..
-  });
-})
+  // Retrieve values from input fields
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
 
+  // Validate inputs
+  if (!email || !password) {
+    Swal.fire({
+      title: "Error",
+      text: "Please fill in both email and password fields.",
+      icon: "warning",
+    });
+    return;
+  }
+
+  // Create user with Firebase Auth
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Account created successfully
+      const user = userCredential.user;
+      Swal.fire({
+        title: "Success!",
+        text: "Account created successfully.",
+        icon: "success",
+      });
+
+      // Clear input fields
+      emailInput.value = "";
+      passwordInput.value = "";
+    })
+    .catch((error) => {
+      // Handle errors
+      const errorMessage = error.message;
+      Swal.fire({
+        title: "Error",
+        text: errorMessage,
+        icon: "error",
+      });
+    });
+});
