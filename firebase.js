@@ -1,8 +1,13 @@
-// Import Firebase functions
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
-// Firebase configuration
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+// import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyANipEpvjQsi3ucUDknB5UkYrn8RrYt_Go",
   authDomain: "form-b3f07.firebaseapp.com",
@@ -16,8 +21,25 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Auth
-const auth = getAuth(app);
 
-// Export the auth object for use in other scripts
-export { auth };
+const email=document.querySelector("#signup-email")
+const password=document.querySelector("#signup-password")
+const signUpBtn=document.querySelector("#signup")
+
+signUpBtn.addEventListener("click", (e)=>{
+    e.preventDefault()
+    const auth = getAuth();
+createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed up 
+    const user = userCredential.user;
+Swal.fire("Account Created Successfully!")    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    Swal.fire(errorMessage)
+    // ..
+  });
+})
+
