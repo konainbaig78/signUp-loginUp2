@@ -1,60 +1,75 @@
-import { getAuth,  signOut, onAuthStateChanged, updateProfile } from "./firebase.js";
+import {
+  getAuth,
+  signOut,
+  onAuthStateChanged,
+  updateProfile,
+} from "./firebase.js";
 
 const auth = getAuth();
 const logout = document.getElementById("logout");
-const userdiv=document.getElementById("user-div")
-const updateText=document.getElementById("updated-text")
-const updateProfileBtn=document.getElementById("updateProfile")
+const userdiv = document.getElementById("user-div");
+const updateText = document.getElementById("updated-text");
+const updateProfileBtn = document.getElementById("updateProfile");
 
-onAuthStateChanged(auth,(user)=>{
-  if(user){
-    userdiv.innerHTML+=`
-    <div>
-     <p>Name: ${user.displayName}</p>
-     <p>Email: ${user.email}</p>`
+updateText.classList.add("updateT"); // This ensures the input is hidden initially
 
-    const uid = user.uid;
-    console.log(uid);
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Clear previous content and display user info
+    userdiv.innerHTML = `
+      <div>
+        <p>Name: ${user.displayName || "No Name Set"}</p>
+        <p>Email: ${user.email}</p>
+      </div>`;
+  } else {
+    userdiv.innerHTML = `<p>Please log in</p>`;
   }
- 
-      
-       else {
-      
-      }
-})
-
-updateProfileBtn.addEventListener("click",(e)=>{
-e.preventDefault()
-
-// if (inputField.classList.contains("updateT")) {
-//   inputField.classList.remove("updateT");
-//   inputField.focus(); // Optionally focus on the input
-//   return;
-// }
-
-console.log(updateText.classList);
-
-const newName=updateText.value.trim()
-if(!newName){
-Swal.fire("Please provide name")
-}
-
-const user=auth.currentUser
-
-if (!user){
-  Swal.fire("please create account")
-}
-updateProfile(auth.currentUser, {
-  displayName: newName
-  //  photoURL: "https://example.com/jane-q-user/profile.jpg"
-}).then(() => {
-  // Profile updated!
-  // ...
-}).catch((error) => {
-  // An error occurred
-  // ...
 });
-})
+
+updateProfileBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  // Toggle the visibility of the input field
+  if (updateText.classList.contains("updateT")) {
+    updateText.classList.remove("updateT"); // Make input visible
+    updateText.focus(); // Focus on the input field for user convenience
+    return;
+  }
+
+  const newName = updateText.value.trim();
+  if (!newName) {
+    Swal.fire("Please provide a name");
+    return;
+  }
+
+  const user = auth.currentUser;
+  if (!user) {
+    Swal.fire("Please create an account");
+    return;
+  }
+
+  // Update profile with the new name
+  updateProfile(user, { displayName: newName })
+    .then(() => {
+      Swal.fire("Profile updated successfully!");
+
+      // Hide the input field after updating
+      updateText.classList.add("updateT");
+
+      // Update the displayed name in userdiv immediately
+      userdiv.innerHTML = `
+        <div>
+          <p>Name: ${newName}</p>
+          <p>Email: ${user.email}</p>
+        </div>`;
+
+      // Clear the input field
+      updateText.value = "";
+    })
+    .catch((error) => {
+      Swal.fire("Failed to update profile. Please try again.");
+    });
+});
 
 logout.addEventListener("click", () => {
   signOut(auth)
