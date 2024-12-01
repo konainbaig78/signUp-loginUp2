@@ -181,9 +181,8 @@ body, html {
 .github {
   background: linear-gradient(45deg, #333333, #424242);
 }
-
-.github:hover {
-  background: linear-gradient(45deg, #424242, #333333);
+.updateT{
+  display:none ;
 }
 
 /* For small screens */

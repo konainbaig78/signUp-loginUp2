@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,  GithubAuthProvider, updateProfile  } from "./firebase.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,  GithubAuthProvider, updateProfile, sendEmailVerification   } from "./firebase.js";
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
 const googleBtn=document.getElementById("googleBtn")
@@ -20,9 +20,16 @@ signUpBtn.addEventListener("click", (e) => {
     return;
   }
 
-  createUserWithEmailAndPassword(auth, email, password)
+  createUserWithEmailAndPassword(auth, email, password, displayName)
     .then((userCredential) => {
       const user = userCredential.user;
+      sendEmailVerification(auth.currentUser)
+  .then(() => {
+    Swal.fire("Verification email send")
+  })
+  .catch((error)=>{
+    Swal.fire(error.message)  
+  })
       updateProfile(auth.currentUser, {
         displayName: displayName, photoURL: "profile/download.jpeg"
       })
@@ -31,7 +38,7 @@ signUpBtn.addEventListener("click", (e) => {
           emailInput.value = "";
           passwordInput.value = "";
           displayNameInput.value = "";
-          window.location.href = "dashboard.html";
+          // window.location.href = "dashboard.html";
       }).catch((error) => {
         console.error("Profile update error:", error);
           Swal.fire("Failed to update profile.");
@@ -39,13 +46,13 @@ signUpBtn.addEventListener("click", (e) => {
       
     })
     
-  /*  .catch((error) => {
+    .catch((error) => {
       const errorMessage = error.message;
       Swal.fire({
          icon: "error",
          text: `Error: ${errorMessage}`
       });
-    });*/
+    });
 });
 
 
@@ -78,29 +85,20 @@ googleBtn.addEventListener("click", () => {
 });
 
 
-githubBtn.addEventListener("click", ()=>{
-  signInWithPopup(auth, provider)
-  .then((result) => {
-   
-    const credential = GithubAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-
-    
-    const user = result.user;
-    Swal.fire(`Welcome ${user.displayName || "User"}!`);
-    window.location.href="dashboard.html"
-   
-  }).catch((error) => {
-   
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    const email = error.customData.email;
-    const credential = GithubAuthProvider.credentialFromError(error);
-    Swal.fire({
-      icon: "error",
-      text: `Google Sign-In Failed: ${errorMessage}`,
+const githubProvider = new GithubAuthProvider();
+githubBtn.addEventListener("click", () => {
+  signInWithPopup(auth, githubProvider)
+    .then((result) => {
+      const credential = GithubAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      const user = result.user;
+      Swal.fire(`Welcome ${user.displayName || "User"}!`);
+      window.location.href = "dashboard.html";
+    })
+    .catch((error) => {
+      Swal.fire({
+        icon: "error",
+        text: `GitHub Sign-In Failed: ${error.message}`,
+      });
     });
-  });
-
-})
-
+});
